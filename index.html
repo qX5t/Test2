@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Wanderer Shop 🌌</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Mitr:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+:root {
+  /* โทนสี ฟ้า + ม่วง */
+  --primary: #b026ff; /* ม่วง */
+  --secondary: #00d2ff; /* ฟ้า */
+  --bg-main: #060513; /* พื้นหลังหน้าเว็บ */
+  --bg-card: #120e26; /* พื้นหลังการ์ด */
+  --border-color: rgba(176,38,255,0.25);
+  --text-muted: #8b8bba;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Kanit', sans-serif;
+  background: var(--bg-main); color: #fff;
+  overflow-x: hidden;
+  padding-bottom: 110px; /* เว้นที่ให้ตะกร้าล่างสุด */
+}
+
+/* Background Glow Effects */
+.bg-glow-1 {
+  position: fixed; top: -100px; left: -100px; width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(176,38,255,0.15) 0%, rgba(0,0,0,0) 70%);
+  z-index: -1; pointer-events: none;
+}
+.bg-glow-2 {
+  position: fixed; bottom: 20%; right: -150px; width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(0,210,255,0.1) 0%, rgba(0,0,0,0) 70%);
+  z-index: -1; pointer-events: none;
+}
+
+/* Particles */
+#pts { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.pt { position: absolute; animation: ptUp linear infinite; opacity: 0; }
+@keyframes ptUp {
+  0%   { transform: translateY(105vh); opacity: 0; }
+  8%   { opacity: 0.45; }
+  92%  { opacity: 0.45; }
+  100% { transform: translateY(-8vh) rotate(360deg); opacity: 0; }
+}
+
+/* --- HERO & TABS SECTION --- */
+.hero {
+  background: linear-gradient(135deg, rgba(176,38,255,0.2) 0%, rgba(0,210,255,0.1) 100%);
+  /* ปรับ Padding ให้ดันข้อความขึ้นไป และเว้นข้างล่างให้สมดุล */
+  padding: 40px 20px 55px; 
+  text-align: center;
+  position: relative;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 40px;
+  box-shadow: 0 4px 30px rgba(176,38,255,0.1);
+}
+.hero-title {
+  font-family: 'Mitr', sans-serif;
+  font-size: 32px; font-weight: 700; color: #fff; 
+  margin-bottom: 4px; letter-spacing: 0.5px;
+  text-shadow: 0 0 15px rgba(176,38,255,0.4);
+}
+.hero-sub {
+  font-size: 13px; color: rgba(255,255,255,0.85);
+}
+
+/* แถบปุ่มสลับหน้าแบบแนวยาว เล็กกะทัดรัด (Segmented Control) */
+.tab-container {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 30px;
+  padding: 4px;
+  width: 260px; /* ความกว้างแนวยาว */
+  z-index: 10;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.tab-btn {
+  flex: 1; /* แบ่งพื้นที่ปุ่มละ 50% */
+  padding: 8px 0; /* ปรับให้ปุ่มดูเตี้ยลง (เล็กขึ้น) */
+  border-radius: 25px;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: transparent;
+  color: var(--text-muted);
+}
+.tab-btn.active {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(176,38,255,0.3);
+}
+
+/* --- CONTENT --- */
+.content { max-width: 600px; margin: 0 auto; padding: 0 20px 50px; position: relative; z-index: 5; }
+.tab-content { display: none; animation: fadeIn 0.3s ease; }
+.tab-content.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- INFO TAB --- */
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 30px 24px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+.info-card-title {
+  font-size: 18px; font-weight: 700; color: var(--secondary); margin-bottom: 4px;
+}
+.info-card-sub {
+  font-size: 13px; color: var(--text-muted); margin-bottom: 24px;
+}
+.info-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px dashed rgba(255,255,255,0.1);
+  font-size: 14px;
+}
+.info-row:last-of-type { border-bottom: none; margin-bottom: 20px; }
+.info-row span:first-child { color: var(--primary); font-weight: 600; }
+.info-row span:last-child { color: #fff; font-weight: 500; }
+
+.review-placeholder {
+  border: 1.5px dashed rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 12px;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.02);
+}
+
+/* --- PRODUCTS TAB --- */
+.sh { 
+  display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding: 0 5px;
+}
+.sh-line {
+  width: 4px; height: 22px;
+  background: linear-gradient(180deg, var(--primary), var(--secondary));
+  border-radius: 4px;
+}
+.sh h2 { font-size: 18px; font-weight: 700; color: #fff; }
+
+.grid-container {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px;
+}
+.item-card {
+  background: var(--bg-card); border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 16px; padding: 16px; position: relative;
+  cursor: pointer; transition: all 0.2s ease;
+  display: flex; flex-direction: column;
+}
+.item-card:active { transform: scale(0.96); }
+.item-card.selected {
+  border-color: var(--primary);
+  background: linear-gradient(145deg, rgba(176,38,255,0.1) 0%, var(--bg-card) 100%);
+  box-shadow: 0 0 15px rgba(176,38,255,0.2);
+}
+
+.check-circle {
+  position: absolute; top: 12px; right: 12px;
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.15);
+  display: flex; justify-content: center; align-items: center;
+  transition: all 0.2s;
+}
+.item-card.selected .check-circle { background: var(--primary); border-color: var(--primary); }
+.check-circle::after {
+  content: '✓'; color: #fff; font-size: 12px; font-weight: bold;
+  opacity: 0; transform: scale(0.5); transition: all 0.2s;
+}
+.item-card.selected .check-circle::after { opacity: 1; transform: scale(1); }
+
+.card-icon { font-size: 30px; margin-bottom: 10px; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5)); }
+.card-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; color: #fff; line-height: 1.2; }
+.card-desc { font-size: 11px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px; flex-grow: 1; }
+.card-price {
+  align-self: flex-start; background: rgba(176,38,255,0.15);
+  color: #e5a3ff; font-weight: 600; font-size: 13px;
+  padding: 4px 10px; border-radius: 8px;
+}
+
+.cat-divider { grid-column: 1 / -1; margin: 10px 0 5px; display: flex; align-items: center; gap: 10px; }
+.cat-divider span { font-size: 14px; font-weight: 600; color: var(--secondary); }
+.cat-divider::after { content: ''; flex: 1; height: 1px; background: rgba(0,210,255,0.2); }
+
+/* --- FLOATING BOTTOM BAR --- */
+.bottom-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: rgba(18, 14, 38, 0.95); backdrop-filter: blur(15px);
+  border-top: 1px solid var(--primary); padding: 15px 24px;
+  display: flex; justify-content: space-between; align-items: center;
+  transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.5); z-index: 1000;
+}
+.bottom-bar.active { transform: translateY(0); }
+.bb-info { display: flex; flex-direction: column; }
+.bb-count { font-size: 12px; color: var(--text-muted); margin-bottom: 2px; }
+.bb-total { font-size: 20px; font-weight: 700; color: #fff; }
+.bb-total span { color: var(--primary); font-size: 16px; margin-right: 2px; }
+.bb-btn {
+  background: linear-gradient(135deg, var(--primary), #d946ef);
+  color: #fff; border: none; border-radius: 25px;
+  padding: 10px 24px; font-size: 16px; font-weight: 600; font-family: inherit;
+  box-shadow: 0 4px 15px rgba(176,38,255,0.4); cursor: pointer; transition: transform 0.2s;
+}
+.bb-btn:active { transform: scale(0.95); }
+
+/* --- MODAL SUMMARY --- */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+  z-index: 2000; display: flex; justify-content: center; align-items: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.modal-overlay.show { opacity: 1; pointer-events: all; }
+.modal-box {
+  background: var(--bg-card); border: 2px solid var(--primary);
+  border-radius: 20px; width: 90%; max-width: 400px; padding: 24px;
+  position: relative; transform: scale(0.9); transition: transform 0.3s;
+  box-shadow: 0 10px 30px rgba(176,38,255,0.3);
+}
+.modal-overlay.show .modal-box { transform: scale(1); }
+
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px;
+}
+.modal-title { font-size: 18px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px; }
+.modal-close { font-size: 24px; color: var(--text-muted); cursor: pointer; line-height: 1; }
+
+.modal-items { max-height: 250px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px; }
+.modal-item {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 10px; font-size: 14px; color: #fff; gap: 10px;
+}
+.modal-item-name { flex: 1; line-height: 1.4; }
+.modal-item-price { color: #e5a3ff; font-weight: 600; }
+
+.modal-divider { border-top: 1px dashed rgba(176,38,255,0.4); margin: 15px 0; }
+.modal-total {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 24px;
+}
+.modal-total-price { font-size: 24px; color: var(--primary); font-weight: 700; }
+
+.modal-btn {
+  background: #00d300; color: #fff; border: none; width: 100%;
+  padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 600; font-family: inherit;
+  cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;
+  box-shadow: 0 4px 15px rgba(0,211,0,0.3); transition: transform 0.2s;
+}
+.modal-btn:active { transform: scale(0.97); }
+
+/* Custom Scrollbar for modal */
+.modal-items::-webkit-scrollbar { width: 4px; }
+.modal-items::-webkit-scrollbar-track { background: var(--bg-main); }
+.modal-items::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="bg-glow-1"></div>
+<div class="bg-glow-2"></div>
+<div id="pts"></div>
+
+<!-- HERO & TABS -->
+<div class="hero">
+  <div class="hero-title">Wanderer_shop</div>
+  <div class="hero-sub">ยินดีต้อนรับร้านละมุดรับสินค้าอะไรดีคะ</div>
+  
+  <div class="tab-container">
+    <button class="tab-btn" id="btn-info" onclick="switchTab('info')">ข้อมูลร้าน</button>
+    <button class="tab-btn active" id="btn-products" onclick="switchTab('products')">สินค้า</button>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- INFO TAB CONTENT -->
+  <div id="tab-info" class="tab-content">
+    <div class="info-card">
+      <h3 class="info-card-title">Showcase & Contact</h3>
+      <p class="info-card-sub">ช่องทางการติดต่อและรายละเอียดร้านค้า</p>
+      
+      <div class="info-row">
+        <span>Line</span>
+        <span>@997pfoig</span>
+      </div>
+      <div class="info-row">
+        <span>Facebook</span>
+        <span>Wanderer Shop</span>
+      </div>
+      <div class="info-row">
+        <span>เวลาทำการ</span>
+        <span>11:00 - 00:00 น.</span>
+      </div>
+      <div class="info-row">
+        <span>การรับประกัน</span>
+        <span>เคลมไวใน 24 ชม.</span>
+      </div>
+      <div class="info-row">
+        <span style="color:#e5a3ff;">หมายเหตุ</span>
+        <span style="font-size:12px; text-align:right;">Netflix ถ้าไม่ได้ซื้อราคาเคลม<br> = ไม่รับเคลมค่ะ</span>
+      </div>
+      
+      <div class="review-placeholder">
+        พื้นที่แสดงรีวิวลูกค้า (Coming Soon)
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS TAB CONTENT -->
+  <div id="tab-products" class="tab-content active">
+    <div class="sh">
+      <div class="sh-line"></div>
+      <h2>หมวดหมู่สินค้า / บริการ</h2>
+    </div>
+    
+    <div class="grid-container" id="productGrid">
+      <!-- JS จะใส่การ์ดสินค้าตรงนี้ -->
+    </div>
+  </div>
